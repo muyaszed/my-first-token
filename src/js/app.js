@@ -13,7 +13,7 @@ App = {
       web3 = new Web3(web3.currentProvider);
     } else {
       // set the provider you want from Web3.providers
-      App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545');
+      App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
       web3 = new Web3(App.web3Provider);
     }
 
@@ -21,13 +21,13 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON('TutorialToken.json', function(data) {
+    $.getJSON('ZedToken.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract.
-      var TutorialTokenArtifact = data;
-      App.contracts.TutorialToken = TruffleContract(TutorialTokenArtifact);
+      var ZedTokenArtifact = data;
+      App.contracts.ZedToken = TruffleContract(ZedTokenArtifact);
 
       // Set the provider for our contract.
-      App.contracts.TutorialToken.setProvider(App.web3Provider);
+      App.contracts.ZedToken.setProvider(App.web3Provider);
 
       // Use our contract to retieve and mark the adopted pets.
       return App.getBalances();
@@ -43,12 +43,12 @@ App = {
   handleTransfer: function(event) {
     event.preventDefault();
 
-    var amount = parseInt($('#TTTransferAmount').val());
-    var toAddress = $('#TTTransferAddress').val();
+    var amount = parseInt($('#CTTransferAmount').val());
+    var toAddress = $('#CTTransferAddress').val();
 
-    console.log('Transfer ' + amount + ' TT to ' + toAddress);
+    console.log('Transfer ' + amount + ' CT to ' + toAddress);
 
-    var tutorialTokenInstance;
+    var zedTokenInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
@@ -57,10 +57,10 @@ App = {
 
       var account = accounts[0];
 
-      App.contracts.TutorialToken.deployed().then(function(instance) {
-        tutorialTokenInstance = instance;
+      App.contracts.ZedToken.deployed().then(function(instance) {
+        zedTokenInstance = instance;
 
-        return tutorialTokenInstance.transfer(toAddress, amount, {from: account, gas: 100000});
+        return zedTokenInstance.transfer(toAddress, amount, {from: account, gas: 100000});
       }).then(function(result) {
         alert('Transfer Successful!');
         return App.getBalances();
@@ -73,7 +73,7 @@ App = {
   getBalances: function() {
     console.log('Getting balances...');
 
-    var tutorialTokenInstance;
+    var zedTokenInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
@@ -82,14 +82,14 @@ App = {
 
       var account = accounts[0];
 
-      App.contracts.TutorialToken.deployed().then(function(instance) {
-        tutorialTokenInstance = instance;
+      App.contracts.ZedToken.deployed().then(function(instance) {
+        zedTokenInstance = instance;
 
-        return tutorialTokenInstance.balanceOf(account);
+        return zedTokenInstance.balanceOf(account);
       }).then(function(result) {
         balance = result.c[0];
 
-        $('#TTBalance').text(balance);
+        $('#CTBalance').text(balance);
       }).catch(function(err) {
         console.log(err.message);
       });
